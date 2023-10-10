@@ -145,36 +145,45 @@ def execute_task():
     """
 
     selected_task = task_selector.get()
+    temperature = float(temperature_entry.get())
+    sample_length = int(sample_length_entry.get())
+    interp_duration = int(interp_duration_entry.get())
+    num_steps=sample_length = int(interp_steps_entry.get())
+    begin_index= int(interp_begin_index_entry.get())
+    end_index= int(interp_end_index_entry.get())
 
     if selected_task == "Generate Samples (Melody)":
         selected_model = melody_model_selector.get()
         selected_config = melody_config_selector.get()
-        generate_samples(selected_model, selected_config, 0.5)
+        generate_samples(selected_model, selected_config,temperature, sample_length)
+
     elif selected_task == "Generate Interpolation (Melody)":
         selected_model = melody_model_selector.get()
         selected_config = melody_config_selector.get()
         path = os.path.join(GENERATED_DIR, "mel_*.mid")
-        generate_interpolation(selected_model, selected_config,path, 0, 1, 0.5, 32, 6)
-
+        generate_interpolation(selected_model, selected_config, path, begin_index, end_index, temperature, interp_duration, num_steps)
+        
     elif selected_task == "Generate Samples (Drums)":
         selected_model = drums_model_selector.get()
         selected_config = drums_config_selector.get()
-        generate_samples(selected_model, selected_config, 0.5)
+        generate_samples(selected_model, selected_config, temperature)
+
     elif selected_task == "Generate Interpolation (Drums)":
         selected_model = drums_model_selector.get()
         selected_config = drums_config_selector.get()
         path = os.path.join(GENERATED_DIR, "drums_*.mid")
-        generate_interpolation(selected_model, selected_config, path, 0, 1, 0.5, 4, 6)
+        generate_interpolation(selected_model, selected_config, path, begin_index, end_index, temperature, interp_duration, num_steps)
 
     elif selected_task == "Generate Samples (Trio)":
         selected_model = trio_model_selector.get()
         selected_config = trio_config_selector.get()
-        generate_samples(selected_model, selected_config, 0.5)
+        generate_samples(selected_model, selected_config, temperature)
+
     elif selected_task == "Generate Interpolation (Trio)":
         selected_model = trio_model_selector.get()
         selected_config = trio_config_selector.get()
         path = os.path.join(GENERATED_DIR, "trio_*.mid")
-        generate_interpolation(selected_model, selected_config, path, 0, 1, 0.5, 32, 6)
+        generate_interpolation(selected_model, selected_config, path, begin_index, end_index, temperature, interp_duration, num_steps)
 
 if __name__ == "__main__":
 
@@ -277,9 +286,49 @@ if __name__ == "__main__":
     trio_config_menu.grid(row=4,column=2,padx=10, pady=5)
     #trio_config_menu.pack()
 
+    # Create entry fields for additional parameters
+    temperature_label = tk.Label(window, text="Temperature:")
+    temperature_label.grid(row=6, column=0, padx=10, pady=5)
+    temperature_entry = tk.Entry(window)
+    temperature_entry.insert(0, "0.5")  # Default value
+    temperature_entry.grid(row=6, column=1, padx=10, pady=5)
+
+    sample_length_label = tk.Label(window, text="Sample Length:")
+    sample_length_label.grid(row=7, column=0, padx=10, pady=5)
+    sample_length_entry = tk.Entry(window)
+    sample_length_entry.insert(0, "32")  # Default value
+    sample_length_entry.grid(row=7, column=1, padx=10, pady=5)
+
+    interp_additional_label = tk.Label(window, text="Interpolation parameters:")
+    interp_additional_label.grid(row=8,column=0,padx=10, pady=5)
+
+    interp_duration_label = tk.Label(window, text="Individual Duration:")
+    interp_duration_label.grid(row=9, column=0, padx=10, pady=5)
+    interp_duration_entry = tk.Entry(window)
+    interp_duration_entry.insert(0, "32")  # Default value, 4 is good for 2 bars, 32 for 16 bars
+    interp_duration_entry.grid(row=9, column=1, padx=10, pady=5)
+
+    interp_steps_label = tk.Label(window, text="Number of steps:")
+    interp_steps_label.grid(row=9, column=2, padx=10, pady=5)
+    interp_steps_entry = tk.Entry(window)
+    interp_steps_entry.insert(0, "6")  # Default value
+    interp_steps_entry.grid(row=9, column=3, padx=10, pady=5)
+
+    interp_begin_index_label = tk.Label(window, text="Begin index:")
+    interp_begin_index_label.grid(row=10, column=0, padx=10, pady=5)
+    interp_begin_index_entry = tk.Entry(window)
+    interp_begin_index_entry.insert(0, "0")  # Default value
+    interp_begin_index_entry.grid(row=10, column=1, padx=10, pady=5)
+
+    interp_end_index_label = tk.Label(window, text="End index:")
+    interp_end_index_label.grid(row=10, column=2, padx=10, pady=5)
+    interp_end_index_entry = tk.Entry(window)
+    interp_end_index_entry.insert(0, "1")  # Default value
+    interp_end_index_entry.grid(row=10, column=3, padx=10, pady=5)
+
     # Create a button to execute the selected task
     execute_button = tk.Button(window, text="Execute Task", command=execute_task)
-    execute_button.grid(row=5,column=0,padx=10,pady=5)
+    execute_button.grid(row=11,column=0,padx=10,pady=5)
     #execute_button.pack()
 
     # Start the GUI main loop
