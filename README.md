@@ -13,3 +13,5 @@ I wanted to make music with maching learning using python. The magenta library a
 # technical specs
 
 The magenta library only works for python 3.6 to 3.7.
+
+![Screenshot](./screenshots/ui.png)
