@@ -13,7 +13,6 @@ https://colab.research.google.com/github/magenta/magenta-demos/blob/master/colab
 
 print('Importing libraries and defining some helper functions...')
 import glob
-import magenta
 
 from magenta import music as mm
 from magenta.models.music_vae import configs
@@ -103,6 +102,34 @@ def interpolate(model, start_seq, end_seq, num_steps, max_length=32,
       assert_same_length=assert_same_length)
 
   print('Starting Interpolation')
+
+
+  """
+  def concatenate_sequences(sequences, sequence_durations=None):
+  
+  Concatenate a series of NoteSequences together.
+
+  Individual sequences will be shifted using shift_sequence_times and then
+  merged together using the protobuf MergeFrom method. This means that any
+  global values (e.g., ticks_per_quarter) will be overwritten by each sequence
+  and only the final value will be used. After this, redundant data will be
+  removed with remove_redundant_data.
+
+  Args:
+    sequences: A list of sequences to concatenate.
+    sequence_durations: An optional list of sequence durations to use. If not
+      specified, the total_time value will be used. Specifying durations is
+      useful if the sequences to be concatenated are effectively longer than
+      their total_time (e.g., a sequence that ends with a rest).
+
+  Returns:
+    A new sequence that is the result of concatenating *sequences.
+
+  Raises:
+    ValueError: If the length of sequences and sequence_durations do not match
+        or if a specified duration is less than the total_time of the sequence.
+  """
+
   interp_seq = mm.sequences_lib.concatenate_sequences(
       note_sequences, [individual_duration] * len(note_sequences))
   print('Ended Interpolation')
@@ -136,7 +163,7 @@ def generate_interpolation(interp_model,config_name, path_pattern = SCRIPT_DIR+"
 
   interp = interpolate(interpolate_model, start_beat, end_beat, num_steps=num_steps, temperature=temperature, individual_duration=individual_duration)
 
-  save(interp, GENERATED_DIR + f"{interp_model}_interp.mid")
+  save(interp, GENERATED_DIR + f"interp\{interp_model}_interp.mid")
 
 def execute_task():
     """
@@ -190,6 +217,10 @@ if __name__ == "__main__":
     """
     Main function
 
+    This interface code was initially suggested by ChatGPT and adjusted to add parameters.
+
+    To remove grid, replace with .pack() function.
+
     """
 
     # Create the main window
@@ -199,7 +230,6 @@ if __name__ == "__main__":
     # Create a label for task selection
     task_label = tk.Label(window, text="Select a Task:")
     task_label.grid(row=0,column=0, padx=10, pady=5)
-    #task_label.pack()
 
     # Create a dropdown menu for task selection
     task_options = [
@@ -215,76 +245,59 @@ if __name__ == "__main__":
     task_selector.set(task_options[0])  # Set the default task
     task_menu = tk.OptionMenu(window, task_selector, *task_options)
     task_menu.grid(row=0,column=1, padx=10, pady=5)
-    #task_menu.pack()
 
     # Create a label for model selection
     model_label = tk.Label(window, text="Select a Model:")
     model_label.grid(row=1,column=1,padx=10,pady=5)
-    #model_label.pack()
-    # Create a dropdown menu for model selection (Melody)
 
+    # Create a dropdown menu for model selection (Melody)
     melody_model_label = tk.Label(window, text="Melody:")
     melody_model_label.grid(row=2,column=0,padx=10, pady=5)
-    #melody_model_label.pack()
+
     melody_model_selector = tk.StringVar(window)
     melody_model_selector.set(melody_model_options[0])  # Set the default model
     melody_model_menu = tk.OptionMenu(window, melody_model_selector, *melody_model_options)
     melody_model_menu.grid(row=2,column=1,padx=10, pady=5)
-    #melody_model_menu.pack()
 
     # Create a dropdown menu for model selection (Drums)
     drums_model_selector = tk.StringVar(window)
     drums_model_selector.set(drums_model_options[0])  # Set the default model
     drums_model_label = tk.Label(window, text="Drums:")
     drums_model_label.grid(row=3,column=0,padx=10, pady=5)
-    #drums_model_label.pack()
+
     drums_model_menu = tk.OptionMenu(window, drums_model_selector, *drums_model_options)
     drums_model_menu.grid(row=3,column=1,padx=10, pady=5)
-    #drums_model_menu.pack()
 
     # Create a dropdown menu for model selection (Trio)
     trio_model_selector = tk.StringVar(window)
     trio_model_selector.set(trio_model_options[0])  # Set the default model
     trio_model_label = tk.Label(window, text="Trio:")
     trio_model_label.grid(row=4,column=0,padx=10, pady=5)
-    #trio_model_label.pack()
+
     trio_model_menu = tk.OptionMenu(window, trio_model_selector, *trio_model_options)
     trio_model_menu.grid(row=4,column=1,padx=10, pady=5)
-    #trio_model_menu.pack()
 
     # Create a label for configuration selection
     config_label = tk.Label(window, text="Select a Configuration:")
     config_label.grid(row=1,column=2,padx=10, pady=5)
-    #config_label.pack()
 
     # Create a dropdown menu for configuration selection (Melody)
-    #melody_config_label = tk.Label(window, text="Melody:")
-    #melody_config_label.grid(row=6,column=0,padx=10, pady=5)
-    #melody_config_label.pack()
     melody_config_selector = tk.StringVar(window)
     melody_config_selector.set(melody_config_options[0])  # Set the default configuration
     melody_config_menu = tk.OptionMenu(window, melody_config_selector, *melody_config_options)
     melody_config_menu.grid(row=2,column=2,padx=10, pady=5)
-    #melody_config_menu.pack()
 
     # Create a dropdown menu for configuration selection (Drums)
-    #drums_config_label = tk.Label(window, text="Drums:")
-    #drums_config_label.grid(row=7,column=0,padx=10, pady=5)
-    #drums_config_label.pack()
     drums_config_selector = tk.StringVar(window)
     drums_config_selector.set(drums_config_options[0])  # Set the default configuration
     drums_config_menu = tk.OptionMenu(window, drums_config_selector, *drums_config_options)
     drums_config_menu.grid(row=3,column=2,padx=10, pady=5)
-    #drums_config_menu.pack()
 
-    #trio_config_label = tk.Label(window, text="Trio:")
-    #trio_config_label.grid(row=8,column=0,padx=10, pady=5)
-    #trio_config_label.pack()
+    # Create a dropdown menu for configuration selection (Trio)
     trio_config_selector = tk.StringVar(window)
     trio_config_selector.set(trio_config_options[0])  # Set the default configuration
     trio_config_menu = tk.OptionMenu(window, trio_config_selector, *trio_config_options)
     trio_config_menu.grid(row=4,column=2,padx=10, pady=5)
-    #trio_config_menu.pack()
 
     # Create entry fields for additional parameters
     temperature_label = tk.Label(window, text="Temperature:")
@@ -302,7 +315,8 @@ if __name__ == "__main__":
     interp_additional_label = tk.Label(window, text="Interpolation parameters:")
     interp_additional_label.grid(row=8,column=0,padx=10, pady=5)
 
-    interp_duration_label = tk.Label(window, text="Individual Duration:")
+    # Individual Duration default of 4 works well for 2 bars, 32 works for 16 bars. This is supposed to be an optional argument, but some values do generate an error.
+    interp_duration_label = tk.Label(window, text="Individual Duration (default sample size X2):")
     interp_duration_label.grid(row=9, column=0, padx=10, pady=5)
     interp_duration_entry = tk.Entry(window)
     interp_duration_entry.insert(0, "32")  # Default value, 4 is good for 2 bars, 32 for 16 bars
@@ -329,7 +343,6 @@ if __name__ == "__main__":
     # Create a button to execute the selected task
     execute_button = tk.Button(window, text="Execute Task", command=execute_task)
     execute_button.grid(row=11,column=0,padx=10,pady=5)
-    #execute_button.pack()
 
     # Start the GUI main loop
     window.mainloop()
