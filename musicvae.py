@@ -323,7 +323,8 @@ if __name__ == "__main__":
     interp_duration_entry.grid(row=9, column=1, padx=10, pady=5)
 
     interp_steps_label = tk.Label(window, text="Number of steps:")
-    interp_steps_label.grid(row=9, column=2, padx=10, pady=5)
+    interp_steps_label.grid(row=9, column=2, padx=10, pady=5)  
+    
     interp_steps_entry = tk.Entry(window)
     interp_steps_entry.insert(0, "6")  # Default value
     interp_steps_entry.grid(row=9, column=3, padx=10, pady=5)
